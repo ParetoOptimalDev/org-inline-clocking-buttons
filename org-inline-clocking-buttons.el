@@ -49,8 +49,14 @@
       (save-restriction
 	(widen)
 	(remove-overlays line-start-pos line-end-pos 'face 'custom-button)
-	(replace-string " Clock In" "" nil line-start-pos line-end-pos)
-	(replace-string "    Clock Out" "" nil line-start-pos line-end-pos)))))
+	(progn
+	  (beginning-of-line)
+	  (when (search-forward " Clock In" line-end-pos t)
+	    (replace-match "" nil t)))
+	(progn
+	  (beginning-of-line)
+	  (when (search-forward "    Clock Out" line-end-pos t)
+	    (replace-match "" nil t)))))))
 
 (defun org-inline-clocking-buttons-add-clock-in-button-to-right-of-heading ()
   "Add a `Clock In` button to the right of the current org heading."
@@ -86,8 +92,13 @@
       (remove-overlays nil nil 'face 'org-inline-clocking-buttons-clock-button-face)
       ;; TODO improve this by making incorrect replacement less likely
       ;; maybe make text behind buttons more unique
-      (replace-regexp "    Clock In" "" nil (point-min) (point-max))
-      (replace-regexp "       Clock Out" "" nil (point-min) (point-max)))))
+      (goto-char (point-min))
+      (progn
+	(when (search-forward "    Clock In" nil t)
+	  (replace-match "" nil t)))
+      (progn
+	(when (search-forward nil t)
+	  (replace-match "       Clock Out" nil t))))))
 
 ;;;###autoload
 (define-minor-mode org-inline-clocking-buttons-mode
