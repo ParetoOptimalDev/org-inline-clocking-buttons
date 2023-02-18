@@ -2,4 +2,4 @@
 
 A gif is worth a million words? 🤠
 
-** TODO add gif
+![](media/demo-org-clocking-buttons.gif)
