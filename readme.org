@@ -7,3 +7,15 @@ A gif is worth a million words? 🤠
 * Install
 
 ** from source until the [[https://github.com/melpa/melpa/pull/8410][melpa PR]] is merged
+
+* Planned [0/3]
+
+** TODO put clocking buttons next to all TODO headings when mode is activated
+
+** TODO replace button with play/stop svg
+
+** TODO put overlay with currently clocked time on clocked heading  that updates 1-2 times per second
+
+If performance allows
+
+probably using a timer
