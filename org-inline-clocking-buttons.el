@@ -4,7 +4,7 @@
 
 ;; Author: ParetoOptimalDev <pareto.optimal@mailfence.com>
 ;; Version: 0.1
-;; Package-Requires: ((emacs "26.1"))
+;; Package-Requires: ((emacs "26.1") (svg-lib "0.2.5"))
 ;; Keywords: outlines, hypermedia, clocking, calendar
 ;; URL: https://github.com/ParetoOptimalDev/org-inline-clocking-buttons
 ;;; Commentary:
@@ -20,13 +20,13 @@
 (define-button-type 'org-clock-in-button
   'follow-link t
   'face 'org-inline-clocking-buttons-clock-button-face
-  'mouse-face 'custom-button-mouse
+  ;; 'mouse-face 'custom-button-mouse
   'action (lambda (_) (org-clock-in)))
 
 (define-button-type 'org-clock-out-button
   'follow-link t
   'face 'org-inline-clocking-buttons-clock-button-face
-  'mouse-face 'custom-button-mouse
+  ;; 'mouse-face 'custom-button-mouse
   'action (lambda (_) (org-clock-out)))
 
 (defun org-inline-clocking-buttons-has-clock-button (str)
@@ -36,11 +36,11 @@
 
 (defun org-inline-clocking-buttons-has-clock-out-button ()
   "Check if clock out button is on current org heading."
-  (org-inline-clocking-buttons-has-clock-button "Clock Out"))
+  (org-inline-clocking-buttons-has-clock-button " "))
 
 (defun org-inline-clocking-buttons-has-clock-in-button ()
   "Check if clock in button is on current org heading."
-  (org-inline-clocking-buttons-has-clock-button "Clock In"))
+  (org-inline-clocking-buttons-has-clock-button " "))
 
 (defun org-inline-clocking-buttons-remove-clock-buttons-current-line ()
   "Remove all clock buttons on the current line."
@@ -49,14 +49,14 @@
     (save-excursion
       (save-restriction
 	(widen)
-	(remove-overlays line-start-pos line-end-pos 'face 'custom-button)
+	(remove-overlays line-start-pos line-end-pos 'face 'org-inline-clocking-buttons-clock-button-face)
 	(progn
 	  (beginning-of-line)
-	  (when (search-forward " Clock In" line-end-pos t)
+	  (when (search-forward "      " line-end-pos t)
 	    (replace-match "" nil t)))
 	(progn
 	  (beginning-of-line)
-	  (when (search-forward "    Clock Out" line-end-pos t)
+	  (when (search-forward "     " line-end-pos t)
 	    (replace-match "" nil t)))))))
 
 (defun org-inline-clocking-buttons-add-clock-in-button-to-right-of-heading ()
@@ -67,10 +67,19 @@
     (save-excursion
       (org-end-of-line)
       (let ((end-of-line-before-insert (point)))
-	(insert "    Clock In")
-	(let* ((button-start (+ 4 end-of-line-before-insert))
-	       (button-end (+ 8 button-start)))
-	  (make-button button-start button-end :type 'org-clock-in-button))))))
+
+	(progn
+	  (insert "    ")
+	  (insert-image
+	   (svg-lib-icon "play-circle" nil
+			 :collection "material"
+			 :stroke 0
+			 :scale 2
+			 :padding 0)))
+	(let* ((button-start (+ 3 end-of-line-before-insert))
+	       (button-end (+ 3 button-start)))
+	  (make-button button-start button-end
+		       :type 'org-clock-in-button))))))
 
 (defun org-inline-clocking-buttons-add-clock-out-button-to-right-of-heading ()
   "Add a `Clock Out` button to the right of the current org heading."
@@ -80,9 +89,15 @@
     (save-excursion
       (org-end-of-line)
       (let ((end-of-line-before-insert (point)))
-	(insert "    Clock Out")
-	(let* ((button-start (+ 4 end-of-line-before-insert))
-	       (button-end (+ 9 button-start)))
+	(progn
+	  (insert "    ")
+	  (insert-image (svg-lib-icon "stop-circle" nil
+				      :collection "material"
+				      :stroke 0
+				      :scale 2
+				      :padding 0)))
+	(let* ((button-start (+ 3 end-of-line-before-insert))
+	       (button-end (+ 3 button-start)))
 	  (make-button button-start button-end :type 'org-clock-out-button))))))
 
 (defun org-inline-clocking-buttons-remove-org-inline-clock-button-overlays ()
