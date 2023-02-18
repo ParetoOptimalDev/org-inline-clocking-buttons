@@ -31,7 +31,7 @@
 (defun org-inline-clocking-buttons-has-clock-button (str)
   "Check if the clock button string STR is in the current org heading."
   (let ((heading-string (nth 4 (org-heading-components))))
-    (and heading-string (s-contains? str heading-string))))
+    (and heading-string  (string-match-p (regexp-quote str) heading-string))))
 
 (defun org-inline-clocking-buttons-has-clock-out-button ()
   "Check if clock out button is on current org heading."
