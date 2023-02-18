@@ -12,6 +12,7 @@
 ;; This package provides a minor mode to add buttons to an org heading inline  for clocking in and out
 
 ;;; Code:
+(require 'org)
 (defface org-inline-clocking-buttons-clock-button-face
   '((t (:inherit custom-button)))
   "Face for GFM checkboxes.")
