@@ -74,7 +74,7 @@
 	   (svg-lib-icon "play-circle" nil
 			 :collection "material"
 			 :stroke 0
-			 :scale 2
+			 :scale 1
 			 :padding 0)))
 	(let* ((button-start (+ 3 end-of-line-before-insert))
 	       (button-end (+ 3 button-start)))
@@ -94,7 +94,7 @@
 	  (insert-image (svg-lib-icon "stop-circle" nil
 				      :collection "material"
 				      :stroke 0
-				      :scale 2
+				      :scale 1
 				      :padding 0)))
 	(let* ((button-start (+ 3 end-of-line-before-insert))
 	       (button-end (+ 3 button-start)))
