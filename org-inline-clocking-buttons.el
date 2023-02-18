@@ -86,10 +86,12 @@
 ;;;###autoload
 (define-minor-mode org-inline-clocking-buttons-mode
   "org inline clocking buttons mode"
+  :lighter nil
   (if org-inline-clocking-buttons-mode
-      (add-hook 'org-after-todo-state-change-hook #'pod/add-clock-in-button-to-right-of-heading)
-    (add-hook 'org-clock-in-hook #'pod/add-clock-out-button-to-right-of-heading)
-    (add-hook 'org-clock-out-hook #'pod/add-clock-in-button-to-right-of-heading))
-  (pod/remove-org-inline-clock-button-overlays))
+      (progn
+	(add-hook 'org-after-todo-state-change-hook #'pod/add-clock-in-button-to-right-of-heading)
+	(add-hook 'org-clock-in-hook #'pod/add-clock-out-button-to-right-of-heading)
+	(add-hook 'org-clock-out-hook #'pod/add-clock-in-button-to-right-of-heading))
+  (pod/remove-org-inline-clock-button-overlays)))
 
 (provide 'org-inline-clocking-buttons-mode)
