@@ -3,3 +3,7 @@
 A gif is worth a million words? 🤠
 
 [[file:media/demo-org-clocking-buttons.gif]]
+
+* Install
+
+** from source until the [[https://github.com/melpa/melpa/pull/8410][melpa PR]] is merged
