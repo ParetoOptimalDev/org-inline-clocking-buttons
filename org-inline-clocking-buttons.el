@@ -110,9 +110,9 @@
 	(add-hook 'org-clock-in-hook #'org-inline-clocking-buttons-add-clock-out-button-to-right-of-heading)
 	(add-hook 'org-clock-out-hook #'org-inline-clocking-buttons-add-clock-in-button-to-right-of-heading))
     (progn (org-inline-clocking-buttons-remove-org-inline-clock-button-overlays)
-	   	(remove-hook 'org-after-todo-state-change-hook #'org-inline-clocking-buttons-add-clock-in-button-to-right-of-heading)
-		(remove-hook 'org-clock-in-hook #'org-inline-clocking-buttons-add-clock-out-button-to-right-of-heading)
-		(remove-hook 'org-clock-out-hook #'org-inline-clocking-buttons-add-clock-in-button-to-right-of-heading))))
+	   (remove-hook 'org-after-todo-state-change-hook #'org-inline-clocking-buttons-add-clock-in-button-to-right-of-heading)
+	   (remove-hook 'org-clock-in-hook #'org-inline-clocking-buttons-add-clock-out-button-to-right-of-heading)
+	   (remove-hook 'org-clock-out-hook #'org-inline-clocking-buttons-add-clock-in-button-to-right-of-heading))))
 
 (provide 'org-inline-clocking-buttons-mode)
 
