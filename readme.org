@@ -1,0 +1,5 @@
+* org-inline-clocking-buttons
+
+A gif is worth a million words? 🤠
+
+** TODO add gif
