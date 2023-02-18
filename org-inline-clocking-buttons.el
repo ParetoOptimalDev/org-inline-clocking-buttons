@@ -20,13 +20,13 @@
   'follow-link t
   'face 'org-inline-clocking-buttons-clock-button-face
   'mouse-face 'custom-button-mouse
-  'action (lambda (b) (org-clock-in)))
+  'action (lambda (_) (org-clock-in)))
 
 (define-button-type 'org-clock-out-button
   'follow-link t
   'face 'org-inline-clocking-buttons-clock-button-face
   'mouse-face 'custom-button-mouse
-  'action (lambda (b) (org-clock-out)))
+  'action (lambda (_) (org-clock-out)))
 
 (defun org-inline-clocking-buttons-has-clock-button (str)
   "Check if the clock button string STR is in the current org heading."
