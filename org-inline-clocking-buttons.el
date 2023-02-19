@@ -77,9 +77,26 @@
 			 :scale 1
 			 :padding 0)))
 	(let* ((button-start (+ 3 end-of-line-before-insert))
-	       (button-end (+ 3 button-start)))
+	       (button-end (+ 2 button-start)))
 	  (make-button button-start button-end
 		       :type 'org-clock-in-button))))))
+
+(defun org-inline-add-play-button-to-todo-headings ()
+  (org-map-entries #'org-inline-add-play-button-and-svg "/TODO​=\"TODO\""))
+
+(defun org-inline-add-play-button-and-svg ()
+  (end-of-line)
+  (insert "    ")
+  (let* ((button-start (- (point) 1))
+	(button-end (+ 2 button-start)))
+  (insert-image
+   (svg-lib-icon "play-circle" nil
+		 :collection "material"
+		 :stroke 0
+		 :scale 1
+		 :padding 0))
+  (make-button button-start button-end
+		       :type 'org-clock-in-button)))
 
 (defun org-inline-clocking-buttons-add-clock-out-button-to-right-of-heading ()
   "Add a `Clock Out` button to the right of the current org heading."
@@ -97,7 +114,7 @@
 				      :scale 1
 				      :padding 0)))
 	(let* ((button-start (+ 3 end-of-line-before-insert))
-	       (button-end (+ 3 button-start)))
+	       (button-end (+ 2 button-start)))
 	  (make-button button-start button-end :type 'org-clock-out-button))))))
 
 (defun org-inline-clocking-buttons-remove-org-inline-clock-button-overlays ()
@@ -110,11 +127,11 @@
       ;; maybe make text behind buttons more unique
       (goto-char (point-min))
       (progn
-	(when (search-forward "    Clock In" nil t)
+	(while (search-forward "     " nil t)
 	  (replace-match "" nil t)))
       (progn
-	(when (search-forward nil t)
-	  (replace-match "       Clock Out" nil t))))))
+	(while (search-forward "     " nil t)
+	  (replace-match "" nil t))))))
 
 ;;;###autoload
 (define-minor-mode org-inline-clocking-buttons-mode
@@ -122,13 +139,13 @@
   :lighter nil
   (if org-inline-clocking-buttons-mode
       (progn
-	(add-hook 'org-after-todo-state-change-hook #'org-inline-clocking-buttons-add-clock-in-button-to-right-of-heading)
 	(add-hook 'org-clock-in-hook #'org-inline-clocking-buttons-add-clock-out-button-to-right-of-heading)
-	(add-hook 'org-clock-out-hook #'org-inline-clocking-buttons-add-clock-in-button-to-right-of-heading))
-    (progn (org-inline-clocking-buttons-remove-org-inline-clock-button-overlays)
-	   (remove-hook 'org-after-todo-state-change-hook #'org-inline-clocking-buttons-add-clock-in-button-to-right-of-heading)
-	   (remove-hook 'org-clock-in-hook #'org-inline-clocking-buttons-add-clock-out-button-to-right-of-heading)
-	   (remove-hook 'org-clock-out-hook #'org-inline-clocking-buttons-add-clock-in-button-to-right-of-heading))))
+	(add-hook 'org-clock-out-hook #'org-inline-clocking-buttons-add-clock-in-button-to-right-of-heading)
+	(org-inline-add-play-button-to-todo-headings))
+    (progn
+      (org-inline-clocking-buttons-remove-org-inline-clock-button-overlays)
+      (remove-hook 'org-clock-in-hook #'org-inline-clocking-buttons-add-clock-out-button-to-right-of-heading)
+      (remove-hook 'org-clock-out-hook #'org-inline-clocking-buttons-add-clock-in-button-to-right-of-heading))))
 
 (provide 'org-inline-clocking-buttons-mode)
 
