@@ -14,8 +14,8 @@
 ;;; Code:
 (require 'org)
 (defface org-inline-clocking-buttons-clock-button-face
-  '((t (:inherit custom-button)))
-  "Face for GFM checkboxes.")
+  '()
+  "Face for org inline clocking buttons")
 
 (define-button-type 'org-clock-in-button
   'follow-link t
@@ -96,7 +96,57 @@
 		 :scale 1
 		 :padding 0))
   (make-button button-start button-end
-		       :type 'org-clock-in-button)))
+	       :type 'org-clock-in-button)))
+
+
+
+;; TODO make timer to update time duration since clock in on clocked item
+
+(defun org-inline-update-clocked-heading-inline-duration ()
+  (save-excursion
+    (when (and (eq (marker-buffer org-clock-marker) (current-buffer)) (org-clocking-p))
+      (org-clock-goto)
+      (end-of-line)
+      ;; TODO update this to overwrite the clocked in time
+      ;; maybe this should be a text button that gets continuously updated for its ease of removal?
+      (let ((line-end-pos (point))
+	    (updated-duration (org-inline-get-time-since-clock-in)))
+	(beginning-of-line)
+	(if (re-search-forward "   time:   [0-9:]+" line-end-pos t)
+	    (replace-match  (concat "   time:   " updated-duration) nil nil)
+	  (progn
+	    (goto-char line-end-pos)
+	    (message "else")
+	    (insert (concat "   time:   " updated-duration))))))))
+
+(defun org-inline-get-time-since-clock-in ()
+  "get the h:mm:ss formatted duration of the last active or inactive clock time of the current heading"
+  ;; let's assume the first item in list is latest clock
+  (save-excursion
+    (let* ((elem (org-element-property :value (car (org-inline-get-clock-lines))))
+	   (start-time (org-timestamp-to-time elem))
+	   (time-since-in-seconds (time-to-seconds (time-since start-time)))
+	   (time-since-in-minutes (/ time-since-in-seconds 60))
+	   (org-duration-format 'h:mm:ss)
+	   (duration (org-duration-from-minutes time-since-in-minutes)))
+      duration)))
+
+(defun org-inline-get-clock-lines ()
+  "Return org-element representations of clock lines in a logbook drawer."
+  (interactive)
+  (save-excursion
+    (goto-char (org-log-beginning))
+    (let ((logbook (org-element-at-point))
+          (clock-entries '())
+          (current-element))
+      ;; (goto-char (org-element-property :contents-begin logbook))
+      (setq current-element (org-element-at-point))
+      (while (eq 'clock (car current-element))
+        (push current-element clock-entries)
+        (forward-line)
+        (setq current-element (org-element-at-point)))
+      (reverse clock-entries))))
+
 
 (defun org-inline-clocking-buttons-add-clock-out-button-to-right-of-heading ()
   "Add a `Clock Out` button to the right of the current org heading."
@@ -115,10 +165,18 @@
 				      :padding 0)))
 	(let* ((button-start (+ 3 end-of-line-before-insert))
 	       (button-end (+ 2 button-start)))
-	  (make-button button-start button-end :type 'org-clock-out-button))))))
+	  (make-button button-start button-end :type 'org-clock-out-button)))
+      (add-clock-time-to-right-of-heading))))
+
+(defun add-clock-time-to-right-of-heading ()
+  ;; get last clock in time
+  ;; get current time
+  ;; subtract
+  ;; format to org duration
+  )
 
 (defun org-inline-clocking-buttons-remove-org-inline-clock-button-overlays ()
-  "Remove all org inline clock butotn overlays in buffer."
+  "Remove all org inline clock button overlays in buffer."
   (save-excursion
     (save-restriction
       (widen)
@@ -126,6 +184,7 @@
       ;; TODO improve this by making incorrect replacement less likely
       ;; maybe make text behind buttons more unique
       (goto-char (point-min))
+      ;; TODO uhh what's this for and what's it doing?
       (progn
 	(while (search-forward "     " nil t)
 	  (replace-match "" nil t)))
@@ -141,7 +200,8 @@
       (progn
 	(add-hook 'org-clock-in-hook #'org-inline-clocking-buttons-add-clock-out-button-to-right-of-heading)
 	(add-hook 'org-clock-out-hook #'org-inline-clocking-buttons-add-clock-in-button-to-right-of-heading)
-	(org-inline-add-play-button-to-todo-headings))
+	(org-inline-add-play-button-to-todo-headings)
+	(run-with-timer 0 1 #'org-inline-update-clocked-heading-inline-duration))
     (progn
       (org-inline-clocking-buttons-remove-org-inline-clock-button-overlays)
       (remove-hook 'org-clock-in-hook #'org-inline-clocking-buttons-add-clock-out-button-to-right-of-heading)
